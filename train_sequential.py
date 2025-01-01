@@ -31,10 +31,10 @@ num_rounds = 6
 num_simulations = 20000
 if platform.system() == 'Windows':
     results_dir = os.path.join(os.path.dirname(__file__), 'data')
-    f = os.path.join(results_dir, "amortized_inference_with_nan_sbi-main.pickle")
+    f = os.path.join(results_dir, "amortized_inference.pickle")
 elif platform.system() == 'Linux':
     results_dir = r'/flash/FukaiU/danielmk/sbiemd/'
-    f = os.path.join(results_dir, "amortized_inference_with_nan_sbi-main.pickle")
+    f = os.path.join(results_dir, "amortized_inference.pickle")
 
 # Load the armortized inference and use it to create the initial proposal
 def loadall(filename):
@@ -49,6 +49,9 @@ def loadall(filename):
 output_filename = f'truncated_sequential_npe_network_baseline_conductance_based_01_outcome_x_hyperexcitability_01.pickle'
 output_path = os.path.join(results_dir, output_filename)
 
+# Check the file path for already existing file under the same name
+# if data already exists, load the inference instance and start at the last
+# iteration. Otherwise start from scratch
 if os.path.isfile(output_path):
     # IF THE OUTPUT FILE EXISTS, START INFERENCE FROM ITS LAST SAVE
     inference = list(loadall(output_path))
@@ -77,16 +80,10 @@ prior, theta_numel, prior_returns_numpy = process_prior(prior_tensor)
 
 simulator = process_simulator(sim.run, prior, is_numpy_simulator=False)
 
-# if not type(amortized_inference[-1]) == sbi.inference.snpe.snpe_c.SNPE_C:
-#     amortized_inference = amortized_inference[-1][list(amortized_inference[-1].keys())[-1]]['inference']
-
 # Define the outcome
 outcome_name = 'hyperexcitable'
 
 x_o = outcomes.x_hyperexcitable[outcome_name]
-
-# Create posterior and truncate
-# posterior = amortized_inference.build_posterior(amortized_estimator)
 
 posterior = inference.build_posterior(sample_with='direct').set_default_x(x_o)
 
@@ -94,11 +91,7 @@ accept_reject_fn = utils.get_density_thresholder(posterior, quantile=1e-4)
 
 proposal = utils.RestrictedPrior(prior, accept_reject_fn, sample_with="rejection")
 
-# Check the file path for already existing file under the same name
-# if data already exists, load the inference instance and start at the last
-# iteration. Otherwise start from scratch
 
-# sys.exit()
 
 output_path = os.path.join(results_dir, output_filename)
 

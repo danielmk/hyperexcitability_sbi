@@ -214,32 +214,6 @@ class Simulator():
     
         return output
     
-    def run_ampa_gaba(self, theta : torch.Tensor):
-        # Merge theta and constants
-        params = self.theta_merge(theta)
-
-        # Make network
-        nw = self.make_network(params)
-        
-        # Setup recordings
-        pc_spikes = b2.SpikeMonitor(nw['pc'], name='pc_spikes')
-        pc_vs = b2.StateMonitor(nw['pc'], 'vs', record=True, name='pc_vs')
-        
-        nw.add(pc_spikes, pc_vs)
-        
-        # Run Network
-        b2.defaultclock.dt = self.dt
-    
-        duration = self.duration
-        
-        nw.run(duration)
-    
-        output = self.get_output(nw, nw['pc_spikes'], nw['pc_vs'])
-    
-        return output
-
-        # return torch.tensor([b2.asarray(mean_rate).mean(), mean_entropy, theta_power, gamma_power, fast_power, correlation, cv])
-
     def run_evaluate(self, theta : torch.Tensor):
         # Merge theta and constants
         params = self.theta_merge(theta)
@@ -301,9 +275,9 @@ if __name__ == '__main__':
     _dt = 0.1*b2.ms  # Needs underscore not to conflict with b2 internal dt
 
     simulator = Simulator(dt=_dt,
-                                    duration=duration,
-                                    network_constants=prior['constants'],
-                                    prior=prior)
+                          duration=duration,
+                          network_constants=prior['constants'],
+                          prior=prior)
 
     """CREATE A THETA"""
     theta = thetas_vetted.baseline
