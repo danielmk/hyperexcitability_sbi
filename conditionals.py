@@ -7,7 +7,7 @@ Created on Wed Oct 16 16:18:21 2024
 
 from dataclasses import dataclass
 from copy import deepcopy
-from metadata import EpilepsyMetadata
+from metadata import Metadata
 import os
 import numpy as np
 
@@ -48,21 +48,21 @@ class Conditional:
             
         return thetas
 
-in_loss_conditional = Conditional("IN Loss", {4: 15, 9: 15}, EpilepsyMetadata.parameter_labels)
+in_loss_conditional = Conditional("IN Loss", {4: 15, 9: 15}, Metadata.parameter_labels)
 
-in_normal_conditional = Conditional("IN Normal", {4: 55, 9: 54}, EpilepsyMetadata.parameter_labels)
+in_normal_conditional = Conditional("IN Normal", {4: 55, 9: 54}, Metadata.parameter_labels)
 
-synapse_only_sprouting_conditional = Conditional("Synapse Sprouting Only", {14: 0.03}, EpilepsyMetadata.parameter_labels)
+synapse_only_sprouting_conditional = Conditional("Synapse Sprouting Only", {14: 0.03}, Metadata.parameter_labels)
 
-synapse_only_normal_conditional = Conditional("Synapse Sprouting Only", {14: 0.0015}, EpilepsyMetadata.parameter_labels)
+synapse_only_normal_conditional = Conditional("Synapse Sprouting Only", {14: 0.0015}, Metadata.parameter_labels)
 
 #synapse_sprouting_conditional = Conditional("Synapse Sprouting", {14: 0.0066, 15: 4.35081171e-9}, EpilepsyMetadata.parameter_labels)
 
 #synapse_normal_conditional = Conditional("Synapse Normal", {14: 0.0001, 15: 4.35081171e-9}, EpilepsyMetadata.parameter_labels)
 
-intrinsics_depolarized_conditional = Conditional("Intrinsics Depolarized", {1: 2.5e-9, 2: -66e-3}, EpilepsyMetadata.parameter_labels)
+intrinsics_depolarized_conditional = Conditional("Intrinsics Depolarized", {1: 2.5e-9, 2: -66e-3}, Metadata.parameter_labels)
 
-intrinsics_normal_conditional= Conditional("Intrinsics Normal", {1: 3.0e-9, 2: -68e-3}, EpilepsyMetadata.parameter_labels)
+intrinsics_normal_conditional = Conditional("Intrinsics Normal", {1: 3.0e-9, 2: -68e-3}, Metadata.parameter_labels)
 
 
 

@@ -255,7 +255,7 @@ class Simulator():
 
 b2.prefs.codegen.target = 'numpy'
 
-params = priors.baseline_epilepsy['low']
+params = priors.baseline['low']
 param_names = list(params.keys())
 param_units = priors.get_base_units(params.values())
 
@@ -266,7 +266,7 @@ if __name__ == '__main__':
     """CREATE THE SIMULATOR"""
     # from brian2 import *
     # constants_dict = constants.dynamics_constant
-    prior = priors.baseline_epilepsy
+    prior = priors.baseline
     
     
     

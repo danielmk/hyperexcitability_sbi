@@ -13,10 +13,10 @@ import brian2 as b2
 if platform.system() == 'Windows':
     results_dir = os.path.join(os.path.dirname(__file__), 'data')
 elif platform.system() == 'Linux':
-    results_dir = r'/flash/FukaiU/danielmk/sbiemd/'
+    results_dir = r'/data/'
 
 @dataclass
-class EpilepsyMetadata:
+class Metadata:
     parameter_labels: tuple = (
         r'$PC_C$',
         r'$PC_{g_L}$',
@@ -66,5 +66,6 @@ class EpilepsyMetadata:
     sim_dt: b2.units.fundamentalunits.Quantity = 0.1 * b2.ms
     
     sim_duration: b2.units.fundamentalunits.Quantity = 1.0 * b2.second
+
     
     

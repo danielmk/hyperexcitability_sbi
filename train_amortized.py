@@ -43,8 +43,6 @@ for file in files:
 all_x_flat = torch.Tensor(np.array(list(chain.from_iterable(all_x))))
 all_theta_flat = torch.Tensor(np.array(list(chain.from_iterable(all_theta))))
 
-
-
 all_x_flat = torch.nan_to_num(all_x_flat, nan=0)  # Convert NaNs to zero
 
 prior_dict = priors.baseline_epilepsy

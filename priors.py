@@ -34,7 +34,7 @@ for ain Hippocampus CA1 oriens lacunosum moleculare neuron
 for nin Hippocampus CA1 basket cells
 """
 
-baseline_epilepsy = {
+baseline = {
     'low': {
         'pc_C': 10.0 * pF,
         'pc_gL': 2.0 * nS,
@@ -191,8 +191,8 @@ baseline_epilepsy = {
     }
 
 
-baseline_low_names = list(baseline_epilepsy['low'].keys())
-baseline_high_names = list(baseline_epilepsy['high'].keys())
+baseline_low_names = list(baseline['low'].keys())
+baseline_high_names = list(baseline['high'].keys())
 assert baseline_low_names == baseline_high_names
 
 """HELPER"""
@@ -216,5 +216,5 @@ def prior_dict_to_tensor_gpu(prior: dict):
                                                    torch.tensor(b2.asarray(list(prior['high'].values())), device='cuda'))
 
 """TESTING"""
-test_prior(baseline_epilepsy)
+test_prior(baseline)
 
