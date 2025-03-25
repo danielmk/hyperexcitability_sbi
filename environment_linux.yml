@@ -1,4 +1,4 @@
-name: sbi
+name: hyperexcitability
 channels:
   - conda-forge
   - defaults
@@ -315,4 +315,4 @@ dependencies:
     - xarray==2024.1.1
     - xarray-einstats==0.7.0
     - zuko==1.2.0
-prefix: /home/d/daniel-muller/anaconda3/envs/sbi
+
