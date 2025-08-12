@@ -1,0 +1,14 @@
+name: hyperexcitability
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - spyder
+  - tables
+  - brian2
+  - pip:
+    - sbi==0.22
+    - pandas
+
+
