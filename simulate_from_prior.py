@@ -9,7 +9,7 @@ import brian2 as b2
 from sbi.inference import simulate_for_sbi
 from sbi.utils.user_input_checks import process_prior, process_simulator
 import priors
-from simulators_epilepsy import Simulator
+from simulators import Simulator
 import os
 from datetime import datetime
 import tables
@@ -25,7 +25,7 @@ elif platform.system() == 'Linux':
     results_dir = '/flash/FukaiU/danielmk/sbiemd/'
 
 # Create the simulator and prepare for sbi
-prior_dict = priors.baseline_epilepsy
+prior_dict = priors.baseline
 
 sim = Simulator(0.1 * b2.ms,
                 1 * b2.second,
