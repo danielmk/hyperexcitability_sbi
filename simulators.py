@@ -135,9 +135,9 @@ class Simulator():
                             name=s)
         
             if pre == post:
-                cs.connect(condition='i != j', p=params[f'{pre}_{post}_p'])
+                cs.connect(condition='i != j', p=float(params[f'{pre}_{post}_p']))
             else:
-                cs.connect(p=params[f'{pre}_{post}_p'])
+                cs.connect(p=float(params[f'{pre}_{post}_p']))
         
             cs.tau_inact = params[f'{pre}_{post}_tau_inact']
             cs.A_SE = params[f'{pre}_{post}_A_SE']
@@ -159,7 +159,7 @@ class Simulator():
                                              cell_dict['nin'],
                                              gap_model,
                                              name='nin_nin_gap')
-        synapses_dict['nin_nin_gap'].connect(p=params['nin_nin_gap_p'])
+        synapses_dict['nin_nin_gap'].connect(p=float(params['nin_nin_gap_p']))
         synapses_dict['nin_nin_gap'].w_gap = params['nin_nin_gap_w']
         
         network_dict = cell_dict | synapses_dict
