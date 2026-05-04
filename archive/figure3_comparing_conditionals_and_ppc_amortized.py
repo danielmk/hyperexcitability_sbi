@@ -44,21 +44,21 @@ col_labels = Metadata.outcome_labels
 f = os.path.join(Metadata.results_dir,
                  "truncated_sequential_npe_network_baseline_conductance_based_01_outcome_x_healthy_v2_01.pickle")
 
-output_path = os.path.join(Metadata.results_dir, 'conditionals_output_data.h5')
+output_path = os.path.join(Metadata.results_dir, 'conditionals_output_data_amortized.h5')
 
 data_file = tables.open_file(output_path, mode='r')
 
 x_in_loss_healthy = data_file.root.in_loss.x_healthy.read()
 
-x_in_loss_in_loss = data_file.root.in_loss.x_in_loss.read()
+x_in_loss_in_loss = data_file.root.in_loss.x_sprouted.read()
 
 x_hyperexcitable_healthy = data_file.root.hyperexcitable_v4.x_healthy.read()
 
-x_hyperexcitable_hyperexcitable = data_file.root.hyperexcitable_v4.x_hyperexcitable.read()
+x_hyperexcitable_hyperexcitable = data_file.root.hyperexcitable_v4.x_sprouted.read()
 
-x_sprouting_healthy = data_file.root.sprouting_only_v4.x_healthy.read()
+x_sprouting_healthy = data_file.root.sprouting_v4.x_healthy.read()
 
-x_sprouting_sprouting = data_file.root.sprouting_only_v4.x_sprouted.read()
+x_sprouting_sprouting = data_file.root.sprouting_v4.x_sprouted.read()
 
 df_x_in_loss_healthy = pd.DataFrame(x_in_loss_healthy, columns=col_labels)
 df_x_in_loss_healthy['conditional'] = 'IN Loss'
@@ -116,14 +116,15 @@ ks_test_hyperexcitable = data_file.root.hyperexcitable_v4.ks_test.read()
 ks_test_hyperexcitable = np.insert(ks_test_hyperexcitable, 1, [np.nan, np.nan], axis=0)
 ks_test_hyperexcitable = np.insert(ks_test_hyperexcitable, 2, [np.nan, np.nan], axis=0)
 
-ks_test_sprouting = data_file.root.sprouting_only_v4.ks_test.read()
+ks_test_sprouting = data_file.root.sprouting_v4.ks_test.read()
 
 ks_test_sprouting = np.insert(ks_test_sprouting, 14, [np.nan, np.nan], axis=0)
 
-ks_test_all = data_file.root.all.ks_test.read()
-colors = ['#66c2a5', '#fc8d62', '# ']
 
-correlations_path = os.path.join(Metadata.results_dir, 'marginal_and_conditional_correlation_matrices.h5')
+# ks_test_all = data_file.root.all.ks_test.read()
+colors = ['#66c2a5', '#fc8d62', '#8da0cb']
+
+correlations_path = os.path.join(Metadata.results_dir, 'marginal_and_conditional_correlation_matrices_amortized.h5')
 
 correlation_file = tables.open_file(correlations_path, mode='r')
 
@@ -195,6 +196,7 @@ intrinsics_corrs = (np.abs(conditional_correlations[1]) + np.abs(conditional_cor
 
 sprouting_corrs = np.abs(conditional_correlations[14])
 
+# fig, ax = plt.subplots(1, 3)
 y = np.arange(in_loss_corrs.shape[0])
 ax[2].hlines(np.arange(len(labels)),
              0,
@@ -219,19 +221,19 @@ ax[2].set_xlim((0, 1.0))
 colors = ["#1f78b4", "#b2df8a"]
 ks_test_in_loss = data_file.root.in_loss.ks_test.read()
 ks_test_hyperexcitable = data_file.root.hyperexcitable_v4.ks_test.read()
-ks_test_sprouting = data_file.root.sprouting_only_v4.ks_test.read()
+ks_test_sprouting = data_file.root.sprouting_v4.ks_test.read()
 
 theta_in_loss_healthy = data_file.root.in_loss.theta_healthy.read()
 
-theta_in_loss_in_loss = data_file.root.in_loss.theta_in_loss.read()
+theta_in_loss_in_loss = data_file.root.in_loss.theta_sprouted.read()
 
 theta_he_healthy = data_file.root.hyperexcitable_v4.theta_healthy.read()
 
-theta_he_unhealthy = data_file.root.hyperexcitable_v4.theta_hyperexcitable.read()
+theta_he_unhealthy = data_file.root.hyperexcitable_v4.theta_sprouted.read()
 
-theta_sprouting_healthy = data_file.root.sprouting_only_v4.theta_healthy.read()
+theta_sprouting_healthy = data_file.root.sprouting_v4.theta_healthy.read()
 
-theta_sprouting_sprouting = data_file.root.sprouting_only_v4.theta_sprouted.read()
+theta_sprouting_sprouting = data_file.root.sprouting_v4.theta_sprouted.read()
 
 # in_loss_labels = deepcopy(labels)
 in_loss_labels = conditionals.in_loss_conditional._get_unconditioned_labels()

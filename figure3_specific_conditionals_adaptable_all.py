@@ -20,6 +20,11 @@ from copy import deepcopy
 from scipy.stats import ks_2samp
 from metadata import Metadata
 import conditionals
+from sbi.analysis import conditional_potential
+import sys
+import pdb
+
+# sys.exit()
 
 """HYPERPARAMTERS"""
 n_samples = 100000
@@ -29,7 +34,7 @@ np.random.seed(321)
 torch.manual_seed(45234567)
 
 f = os.path.join(Metadata.results_dir,
-                 "truncated_sequential_npe_network_baseline_conductance_based_01_baseline.pickle")
+                 "truncated_sequential_npe_network_baseline_conductance_based_01_baseline_replicate_02.pickle")
 
 
 def loadall(filename):
@@ -39,7 +44,6 @@ def loadall(filename):
                 yield pickle.load(f)
             except EOFError:
                 break
-
 
 data = list(loadall(f))
 
@@ -94,6 +98,8 @@ mcmc_posterior = sbi.inference.MCMCPosterior(
     num_chains=20,
 ).set_default_x(x_o)
 
+pdb.set_trace()
+
 samples['Normal'] = mcmc_posterior.sample((n_samples,))
 
 conditioned_potential_fn, restricted_tf, restricted_prior = conditional_potential(
@@ -132,13 +138,13 @@ x_baseline = simulator(theta_baseline)
 theta_hyperexcitable = conditional_patho.make_theta(samples['Patho'])[:n_simulations]
 x_hyperexcitable = simulator(theta_hyperexcitable)
 
-output_path = os.path.join(Metadata.results_dir, 'conditionals_output_data.h5')
+output_path = os.path.join(Metadata.results_dir, 'conditionals_output_data_replicate_02.h5')
 
-condition = 'sprouting_only_v4'
+condition = 'sprouting'
 with tables.open_file(output_path, mode='a') as output:
     output.create_group('/', f'{condition}')
     output.create_array(f'/{condition}', 'x_healthy', obj=x_baseline.numpy())
-    output.create_array(f'/{condition}', 'x_sprouted', obj=x_hyperexcitable.numpy())
+    output.create_array(f'/{condition}', 'x_unhealthy', obj=x_hyperexcitable.numpy())
     output.create_array(f'/{condition}', 'theta_healthy', obj=samples['Normal'].numpy())
-    output.create_array(f'/{condition}', 'theta_sprouted', obj=samples['Patho'].numpy())
+    output.create_array(f'/{condition}', 'theta_unhealthy', obj=samples['Patho'].numpy())
     output.create_array(f'/{condition}', 'ks_test', obj=ks_test)

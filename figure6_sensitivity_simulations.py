@@ -31,7 +31,6 @@ np.random.seed(321)
 
 torch.manual_seed(45234567)
 
-
 output_path = os.path.join(EpilepsyMetadata.results_dir, 'sensitivity_analysis.h5')
 
 data_file = tables.open_file(output_path, mode='r')

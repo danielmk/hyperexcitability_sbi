@@ -62,7 +62,7 @@ simulator, prior = prepare_for_sbi(simulator.run, prior)
 
 """SET THE CONDITION HERE"""
 conditional = conditionals.synapse_only_sprouting_conditional  # CONDITION IS SPECIFIED HERE!
-
+pdb.set_trace()
 """SAMPLE FROM THE TWO DIFFERENT NEURAL NETS WITH THE SAME CONDITION"""
 posterior_estimators = {'Baseline': inference_bl._neural_net, 'Hyperexcitable': inference_he._neural_net}
 outcomes = {'Baseline': outcomes.x_baseline['baseline'], 'Hyperexcitable': outcomes.x_hyperexcitable['hyperexcitable']}
@@ -114,7 +114,7 @@ for idx in range(len(conditional.unconditioned_labels)):
     curr_ks = ks_2samp(samples['Baseline'][:, idx], samples['Hyperexcitable'][:, idx])
     ks_test.append(curr_ks)
 
-ax[0, 0].legend(("IN Loss Baseline", "IN Loss Hyperexcitable"))
+ax[0].legend(("IN Loss Baseline", "IN Loss Hyperexcitable"))
 # SAMPLING FROM MAP CONDITIONED
 
 alpha = 0.001 / len(ks_test)
@@ -163,7 +163,7 @@ x_hyperexcitable = simulator(theta_hyperexcitable)
 
 output_path = os.path.join(Metadata.results_dir, 'conditionals_output_data_healthy_vs_hyperexcitable.h5')
 
-condition = 'sprouting_only_v3'
+condition = 'hyperexcitable_v4'
 with tables.open_file(output_path, mode='a') as output:
     output.create_group('/', condition)
     output.create_array(f'/{condition}', 'x_healthy', obj=x_baseline.numpy())

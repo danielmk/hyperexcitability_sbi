@@ -26,7 +26,7 @@ np.random.seed(321)
 
 torch.manual_seed(104)
 
-results_dir = os.path.join(Metadata.results_dir, "amortized_inference_one.pickle")
+results_dir = os.path.join(Metadata.results_dir, "amortized_inference_two.pickle")
 
 class CPU_Unpickler(pickle.Unpickler):
     def find_class(self, module, name):
@@ -176,7 +176,7 @@ ax.set_ylim((-1, 1))
 ax.set_aspect('equal', 'box')
 
 """SAVE THE CORRELATION MATRICES"""
-output_path = os.path.join(Metadata.results_dir, 'marginal_and_conditional_correlation_matrices_amortized.h5')
+output_path = os.path.join(Metadata.results_dir, 'marginal_and_conditional_correlation_matrices_amortized_two.h5')
 
 with tables.open_file(output_path, mode='a') as output:
     output.create_array('/', 'conditional_correlations', obj=conditional_corr_matrix)

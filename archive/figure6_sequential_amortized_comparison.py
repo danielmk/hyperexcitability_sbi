@@ -44,21 +44,21 @@ col_labels = Metadata.outcome_labels
 f = os.path.join(Metadata.results_dir,
                  "truncated_sequential_npe_network_baseline_conductance_based_01_outcome_x_healthy_v2_01.pickle")
 
-output_path = os.path.join(Metadata.results_dir, 'conditionals_output_data.h5')
+output_path = os.path.join(Metadata.results_dir, 'conditionals_output_data_amortized.h5')
 
 data_file = tables.open_file(output_path, mode='r')
 
 x_in_loss_healthy = data_file.root.in_loss.x_healthy.read()
 
-x_in_loss_in_loss = data_file.root.in_loss.x_in_loss.read()
+x_in_loss_in_loss = data_file.root.in_loss.x_sprouted.read()
 
 x_hyperexcitable_healthy = data_file.root.hyperexcitable_v4.x_healthy.read()
 
-x_hyperexcitable_hyperexcitable = data_file.root.hyperexcitable_v4.x_hyperexcitable.read()
+x_hyperexcitable_hyperexcitable = data_file.root.hyperexcitable_v4.x_sprouted.read()
 
-x_sprouting_healthy = data_file.root.sprouting_only_v4.x_healthy.read()
+x_sprouting_healthy = data_file.root.sprouting_v4.x_healthy.read()
 
-x_sprouting_sprouting = data_file.root.sprouting_only_v4.x_sprouted.read()
+x_sprouting_sprouting = data_file.root.sprouting_v4.x_sprouted.read()
 
 df_x_in_loss_healthy = pd.DataFrame(x_in_loss_healthy, columns=col_labels)
 df_x_in_loss_healthy['conditional'] = 'IN Loss'
@@ -116,14 +116,15 @@ ks_test_hyperexcitable = data_file.root.hyperexcitable_v4.ks_test.read()
 ks_test_hyperexcitable = np.insert(ks_test_hyperexcitable, 1, [np.nan, np.nan], axis=0)
 ks_test_hyperexcitable = np.insert(ks_test_hyperexcitable, 2, [np.nan, np.nan], axis=0)
 
-ks_test_sprouting = data_file.root.sprouting_only_v4.ks_test.read()
+ks_test_sprouting = data_file.root.sprouting_v4.ks_test.read()
 
 ks_test_sprouting = np.insert(ks_test_sprouting, 14, [np.nan, np.nan], axis=0)
 
-ks_test_all = data_file.root.all.ks_test.read()
-colors = ['#66c2a5', '#fc8d62', '# ']
 
-correlations_path = os.path.join(Metadata.results_dir, 'marginal_and_conditional_correlation_matrices.h5')
+# ks_test_all = data_file.root.all.ks_test.read()
+colors = ['#66c2a5', '#fc8d62', '#8da0cb']
+
+correlations_path = os.path.join(Metadata.results_dir, 'marginal_and_conditional_correlation_matrices_amortized.h5')
 
 correlation_file = tables.open_file(correlations_path, mode='r')
 
@@ -195,6 +196,7 @@ intrinsics_corrs = (np.abs(conditional_correlations[1]) + np.abs(conditional_cor
 
 sprouting_corrs = np.abs(conditional_correlations[14])
 
+# fig, ax = plt.subplots(1, 3)
 y = np.arange(in_loss_corrs.shape[0])
 ax[2].hlines(np.arange(len(labels)),
              0,
@@ -215,23 +217,65 @@ ax[2].legend(("", "IN Loss", "Sprouting", "Intrinsic"))
 ax[2].set_xlim((0, 1.0))
 
 
+"""SEQUENTIAL"""
+output_path_sequential = os.path.join(Metadata.results_dir, 'conditionals_output_data.h5')
+
+data_file_sequential = tables.open_file(output_path_sequential, mode='r')
+
+
+
+ks_test_in_loss_sequential = data_file_sequential.root.in_loss.ks_test.read()
+
+ks_test_in_loss_sequential = np.insert(ks_test_in_loss_sequential, 4, [np.nan, np.nan], axis=0)
+ks_test_in_loss_sequential = np.insert(ks_test_in_loss_sequential, 9, [np.nan, np.nan], axis=0)
+
+ks_test_hyperexcitable_sequential = data_file_sequential.root.hyperexcitable_v4.ks_test.read()
+
+ks_test_hyperexcitable_sequential = np.insert(ks_test_hyperexcitable_sequential, 1, [np.nan, np.nan], axis=0)
+ks_test_hyperexcitable_sequential = np.insert(ks_test_hyperexcitable_sequential, 2, [np.nan, np.nan], axis=0)
+
+ks_test_sprouting_sequential = data_file_sequential.root.sprouting_only_v4.ks_test.read()
+
+ks_test_sprouting_sequential = np.insert(ks_test_sprouting_sequential, 14, [np.nan, np.nan], axis=0)
+
+plt.figure()
+plt.scatter(ks_test_in_loss[:, 0], ks_test_in_loss_sequential[:, 0])
+
+plt.figure()
+plt.scatter(ks_test_hyperexcitable[:, 0], ks_test_hyperexcitable_sequential[:, 0])
+
+plt.figure()
+plt.scatter(ks_test_sprouting[:, 0], ks_test_sprouting_sequential[:, 0])
+
+
+# ax[0].plot(ks_test_in_loss[:, 0], y, marker='o', linestyle='None', markersize=20, color=colors[0], alpha=0.8)
+# ax[0].plot(ks_test_sprouting[:, 0], y, marker='d', linestyle='None', markersize=20, color=colors[1], alpha=0.8)
+# ax[0].plot(ks_test_hyperexcitable[:, 0], y, marker='s', linestyle='None', markersize=20, color=colors[2], alpha=0.8)
+
+
+
+
+sys.exit()
+
+
+
 """MAKE THE HISTOGRAM COMPARISON PLOT"""
 colors = ["#1f78b4", "#b2df8a"]
 ks_test_in_loss = data_file.root.in_loss.ks_test.read()
 ks_test_hyperexcitable = data_file.root.hyperexcitable_v4.ks_test.read()
-ks_test_sprouting = data_file.root.sprouting_only_v4.ks_test.read()
+ks_test_sprouting = data_file.root.sprouting_v4.ks_test.read()
 
 theta_in_loss_healthy = data_file.root.in_loss.theta_healthy.read()
 
-theta_in_loss_in_loss = data_file.root.in_loss.theta_in_loss.read()
+theta_in_loss_in_loss = data_file.root.in_loss.theta_sprouted.read()
 
 theta_he_healthy = data_file.root.hyperexcitable_v4.theta_healthy.read()
 
-theta_he_unhealthy = data_file.root.hyperexcitable_v4.theta_hyperexcitable.read()
+theta_he_unhealthy = data_file.root.hyperexcitable_v4.theta_sprouted.read()
 
-theta_sprouting_healthy = data_file.root.sprouting_only_v4.theta_healthy.read()
+theta_sprouting_healthy = data_file.root.sprouting_v4.theta_healthy.read()
 
-theta_sprouting_sprouting = data_file.root.sprouting_only_v4.theta_sprouted.read()
+theta_sprouting_sprouting = data_file.root.sprouting_v4.theta_sprouted.read()
 
 # in_loss_labels = deepcopy(labels)
 in_loss_labels = conditionals.in_loss_conditional._get_unconditioned_labels()
@@ -280,18 +324,6 @@ for idx, param in enumerate(largest_labels_he):
     ax[2, idx].hist(largest_parameters_he_unhealthy[:, idx], bins=bins, color=colors[1], histtype=u'step')
     ax[2, idx].set_xlabel(largest_labels_he[idx])
 ax[2, 0].legend(("Healthy", "Hyperexcitable"))
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

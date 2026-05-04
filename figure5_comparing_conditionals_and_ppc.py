@@ -106,27 +106,27 @@ ks_test_sprouting = np.insert(ks_test_sprouting, 14, [np.nan, np.nan], axis=0)
 colors = ['#66c2a5', '#fc8d62', '#8da0cb']
 y = np.arange(ks_test_in_loss.shape[0])
 
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, 3)
 y = np.arange(ks_test_in_loss.shape[0])
 ls = 'solid'
 alpha = 1
-ax.hlines(np.arange(len(labels)),
+ax[0].hlines(np.arange(len(labels)),
           0,
           np.nanmax([ks_test_sprouting[:, 0], ks_test_hyperexcitable[:, 0], ks_test_hyperexcitable[:, 0]], axis=0),
           color='grey',
           alpha=alpha,
           linestyle=ls)
-ax.plot(ks_test_in_loss[:, 0], y, marker='o', linestyle='None', markersize=20, color=colors[0], alpha=0.8)
-ax.plot(ks_test_sprouting[:, 0], y, marker='d', linestyle='None', markersize=20, color=colors[1], alpha=0.8)
-ax.plot(ks_test_hyperexcitable[:, 0], y, marker='s', linestyle='None', markersize=20, color=colors[2], alpha=0.8)
-ax.set_yticks(np.arange(len(labels)))
+ax[0].plot(ks_test_in_loss[:, 0], y, marker='o', linestyle='None', markersize=20, color=colors[0], alpha=0.8)
+ax[0].plot(ks_test_sprouting[:, 0], y, marker='d', linestyle='None', markersize=20, color=colors[1], alpha=0.8)
+ax[0].plot(ks_test_hyperexcitable[:, 0], y, marker='s', linestyle='None', markersize=20, color=colors[2], alpha=0.8)
+ax[0].set_yticks(np.arange(len(labels)))
 # ... and label them with the respective list entries
-ax.set_yticklabels(labels)
+ax[0].set_yticklabels(labels)
 # plt.setp(ax[0].get_yticklabels(), rotation=90, ha="right",
 #          rotation_mode="anchor")
-ax.set_xlabel("KS Test Statistic")
-ax.legend(("", "IN Loss", "Sprouting", "Intrinsic"))
-ax.set_xlim((0, 1.1))
+ax[0].set_xlabel("KS Test Statistic")
+ax[0].legend(("", "IN Loss", "Sprouting", "Intrinsic"))
+ax[0].set_xlim((0, 1.0))
 
 
 """MAKE THE HISTOGRAM COMPARISON PLOT"""

@@ -26,18 +26,25 @@ np.random.seed(321)
 
 torch.manual_seed(104)
 
-f = os.path.join(Metadata.results_dir, "truncated_sequential_npe_network_baseline_conductance_based_01_baseline_replicate_01.pickle")
+f = os.path.join(Metadata.results_dir, "truncated_sequential_npe_network_baseline_conductance_based_01_baseline.pickle")
 
 
-with open(f, "rb") as f:
-    data = pickle.load(f)
+def loadall(filename):
+    with open(filename, "rb") as f:
+        while True:
+            try:
+                yield pickle.load(f)
+            except EOFError:
+                break
 
+
+data = list(loadall(f))
 
 x_o = outcomes.x_baseline['baseline']
 
 inference_round = 3
 
-inference = data[list(data.keys())[0]]['inference']
+inference = data[inference_round][list(data[inference_round].keys())[0]]['inference']
 
 posterior = inference.build_posterior().set_default_x(x_o)
 
@@ -167,6 +174,44 @@ ax.set_xlim((-1, 1))
 ax.set_ylim((-1, 1))
 ax.set_aspect('equal', 'box')
 
+"""MAP CONDITIONAL SAMPLES"""
+prior = priors.baseline
+prior_tensor = priors.prior_dict_to_tensor(prior)
+n_samples = 100000
+n_parameters = len(Metadata.parameter_labels)
+conditional_samples_array = np.empty((n_parameters, n_parameters, n_samples, 2))
+
+potential_fn, theta_transform = sbi.inference.posterior_estimator_based_potential(
+    inference._neural_net, prior=prior_tensor, x_o=x_o
+)
+
+for i in range(0, n_parameters):
+    for j in range(i+1, n_parameters):
+        curr_sample_list = []
+        dims_to_sample = np.array([i, j])
+        
+
+        conditioned_potential_fn, restricted_tf, restricted_prior = sbi.analysis.conditional_potential(
+            potential_fn=potential_fn,
+            theta_transform=theta_transform,
+            prior=prior_tensor,
+            condition=healthy_map,
+            dims_to_sample=dims_to_sample,
+        )
+        
+        mcmc_posterior = sbi.inference.MCMCPosterior(
+            potential_fn=conditioned_potential_fn,
+            theta_transform=restricted_tf,
+            proposal=restricted_prior,
+            method="slice_np_vectorized",
+            num_chains=20,
+        ).set_default_x(x_o)
+        
+        curr_samples = mcmc_posterior.sample((n_samples,))
+    
+        conditional_samples_array[i,j] = np.array(curr_samples)
+        conditional_samples_array[j,i] = np.array(curr_samples)
+"""
 conditional_samples_file = tables.open_file(os.path.join(Metadata.results_dir, 'conditional_samples_replicate_02.h5'))
 
 conditional_samples = conditional_samples_file.root.conditional_samples.read()
@@ -200,9 +245,9 @@ for a in ax:
 max_count = np.max([x[0].max() for x in hist_list])
 
 fig.tight_layout()
-
+"""
 """SAVE THE CORRELATION MATRICES"""
-output_path = os.path.join(Metadata.results_dir, 'conditional_samples_replicate_02.h5')
+output_path = os.path.join(Metadata.results_dir, 'conditional_samples_baseline.h5')
 
 with tables.open_file(output_path, mode='a') as output:
     output.create_array('/', 'conditional_samples', obj=conditional_samples_array)

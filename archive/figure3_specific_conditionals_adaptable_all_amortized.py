@@ -35,7 +35,7 @@ results_dir = os.path.join(Metadata.results_dir,
 
 
 
-x_o = outcomes.x_baseline['baseline']
+x_o = outcomes.x_baseline['baseline'].to('cuda')
 
 class CPU_Unpickler(pickle.Unpickler):
     def find_class(self, module, name):
@@ -46,7 +46,8 @@ class CPU_Unpickler(pickle.Unpickler):
 
 
 with open(results_dir, "rb") as f:
-    inference = CPU_Unpickler(f).load()
+    # inference = CPU_Unpickler(f).load()
+    inference = pickle.load(f)
 
 # posterior = inference.build_posterior().set_default_x(x_o)
 
@@ -81,17 +82,18 @@ conditioned_potential_fn, restricted_tf, restricted_prior = conditional_potentia
     potential_fn=potential_fn,
     theta_transform=theta_transform,
     prior=prior,
-    condition=torch.as_tensor(conditional_normal.condition, dtype=torch.float),
-    dims_to_sample=conditional_normal.dims_to_sample,
+    condition=torch.as_tensor(conditional_normal.condition, dtype=torch.float).to('cuda'),
+    dims_to_sample=torch.Tensor(conditional_normal.dims_to_sample).to('cuda'),
 )
 
 mcmc_posterior = sbi.inference.MCMCPosterior(
     potential_fn=conditioned_potential_fn,
     theta_transform=restricted_tf,
     proposal=restricted_prior,
-    method="slice_np_vectorized",
+    method="hmc_pyro",
     num_chains=10,
     num_workers=12,
+    device='cuda',
 ).set_default_x(x_o)
 
 samples['Normal'] = mcmc_posterior.sample((n_samples,))
